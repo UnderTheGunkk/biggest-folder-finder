@@ -1,22 +1,22 @@
 import java.io.File;
+import java.util.HashMap;
+import java.util.concurrent.ForkJoinPool;
 
 public class Main {
+
     public static void main(String[] args) {
-        String folderPath = "C:/Users/д/Desktop";
+        ParametersBag bag = new ParametersBag(args);
+
+        String folderPath = bag.getPath();
+        long sizeLimit = bag.getLimit();
+
         File file = new File(folderPath);
+        Node root = new Node(file, sizeLimit);
 
-        System.out.println(getFoldrSize(file));
-    }
+        FoldrSizeCalculator calculator = new FoldrSizeCalculator(root);
+        ForkJoinPool pool = new ForkJoinPool();
+        long size = pool.invoke(calculator);
+        System.out.println(root);
 
-    public static long getFoldrSize(File folder){
-        if (folder.isFile()) {
-            return folder.length();
-        }
-        long sum = 0;
-        File[] files = folder.listFiles();
-        for(File file : files){
-            sum += getFoldrSize(file);
-        }
-        return sum;
     }
 }
